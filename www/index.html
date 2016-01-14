@@ -26,10 +26,14 @@
   <body ng-app="starter" ng-controller="starterCtrl as strctrl">
 
       <ion-pane>
-          <ion-header-bar class="bar bar-header bar-stable">
-                <h4 class="titles">Feed Reader</h4>
+          <ion-header-bar class="bar bar-header bar-royal" >
+              <h4 class="title">Science Feeder</h4>
           </ion-header-bar>
             <ion-content >
+                  <ion-refresher
+                    pulling-text="Pull to refresh..."
+                    on-refresh="loadNewerStories()">
+                  </ion-refresher>
               <div class="list">
                   <a href ="{{story.url}}" class="item item-thumbnail-left " ng-repeat= "story in strctrl.stories track by story.id" target="_blank">
                     <img ng-src="{{story.thumbnail}}" ng-if="story.thumbnail.startsWith('http')">

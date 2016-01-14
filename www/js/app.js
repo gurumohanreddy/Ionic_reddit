@@ -29,22 +29,36 @@ myApp.controller('starterCtrl',['$http','$scope',function($http,$scope){
   vm.stories = [];
 
 
+        vm.loadstories = function(params,callback){
+          $http.get('https://www.reddit.com/r/EverythingScience/new/.json',{params:params})
+            .success(function(response){
+              var stories = [];
+                angular.forEach(response.data.children,function(child){
+                    vm.stories.push(child.data);
+                });
+                callback(stories);
+            });
+        }
+
       vm.loadOlderStories = function(){
         var params = {};
         if(vm.stories.length!=0){
           params["after"]= vm.stories[vm.stories.length-1].name
         }
-        $http.get('https://www.reddit.com/r/android/new/.json',{params:params})
-          .success(function(response){
-              angular.forEach(response.data.children,function(child){
-                  vm.stories.push(child.data);
-                  console.log(child.data);
-              });
-              $scope.$broadcast('scroll.infiniteScrollComplete');
-          });
+        vm.loadstories(params,function(olderstories){
+            vm.stories = vm.stories.concat(olderstories);
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+
       };
 
-
+      vm.loadNewerStories = function(){
+          var params = {'before': vm.stories[0].name};
+          vm.loadstories(params,function(newerstories){
+            vm.stories = newerstories.concat(vm.stories);
+            $scope.$broadcast('scroll.refreshComplete');
+          });
+      };
 }]);
 
 // .config(function($stateProvider, $urlRouterProvider) {
