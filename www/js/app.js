@@ -5,23 +5,38 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['$http','ionic'])
+var myApp = angular.module('starter', ['ionic','angularMoment']);
 
-.run(function($ionicPlatform) {
+myApp.run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
+
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       cordova.plugins.Keyboard.disableScroll(true);
 
     }
     if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
   });
-})
+});
+
+
+
+myApp.controller('starterCtrl',['$http',function($http){
+
+  var vm = this;
+  vm.stories = [];
+    $http.get('https://www.reddit.com/r/android/new/.json')
+      .success(function(response){
+          angular.forEach(response.data.children,function(child){
+              vm.stories.push(child.data);
+              console.log(child.data);
+          });
+      });
+
+
+}]);
 
 // .config(function($stateProvider, $urlRouterProvider) {
 //
