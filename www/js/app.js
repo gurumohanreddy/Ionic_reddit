@@ -23,17 +23,26 @@ myApp.run(function($ionicPlatform) {
 
 
 
-myApp.controller('starterCtrl',['$http',function($http){
+myApp.controller('starterCtrl',['$http','$scope',function($http,$scope){
 
   var vm = this;
   vm.stories = [];
-    $http.get('https://www.reddit.com/r/android/new/.json')
-      .success(function(response){
-          angular.forEach(response.data.children,function(child){
-              vm.stories.push(child.data);
-              console.log(child.data);
+
+
+      vm.loadOlderStories = function(){
+        var params = {};
+        if(vm.stories.length!=0){
+          params["after"]= vm.stories[vm.stories.length-1].name
+        }
+        $http.get('https://www.reddit.com/r/android/new/.json',{params:params})
+          .success(function(response){
+              angular.forEach(response.data.children,function(child){
+                  vm.stories.push(child.data);
+                  console.log(child.data);
+              });
+              $scope.$broadcast('scroll.infiniteScrollComplete');
           });
-      });
+      };
 
 
 }]);
